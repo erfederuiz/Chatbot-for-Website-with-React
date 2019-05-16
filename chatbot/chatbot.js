@@ -1,23 +1,33 @@
 'use strict';
 const dialogflow = require('dialogflow');
+const uuid = require('uuid');
 const structjson = require('./structjson.js');
 const config = require('../config/keys');
+
+// Get content from file
+var fs = require("fs");
+var contents = fs.readFileSync('/home/fede/Documents/Proyectos-Iron/cannabot/cannabot-gcloud-creds.json');
+// Define to JSON type
+var jsonContent = JSON.parse(contents);
+
 const mongoose = require('mongoose');
 
 const googleAuth = require('google-oauth-jwt');
 
-const projectId = config.googleProjectID;
-const sessionId = config.dialogFlowSessionID;
-const languageCode = config.dialogFlowSessionLanguageCode;
+const projectId = jsonContent.project_id;
+const sessionId = uuid.v4();
+const languageCode = 'en-US';
 
 const credentials = {
-    client_email: config.googleClientEmail,
+    client_email: jsonContent.googleClientEmail,
     private_key:
-    config.googlePrivateKey,
+    jsonContent.googlePrivateKey,
 };
 
-const sessionClient = new dialogflow.SessionsClient({projectId, credentials});
-
+//const sessionClient = new dialogflow.SessionsClient({projectId, credentials});
+const sessionClient = new dialogflow.SessionsClient({
+    keyFilename: '/home/fede/Documents/Proyectos-Iron/cannabot/cannabot-gcloud-creds.json'
+});
 
 
 const Registration = mongoose.model('registration');
@@ -27,14 +37,16 @@ module.exports = {
 
     getToken: async function() {
         return new Promise((resolve) => {
+
             googleAuth.authenticate(
                 {
-                    email: config.googleClientEmail,
-                    key: config.googlePrivateKey,
+                    email: jsonContent.client_email,
+                    keyFile: '/home/fede/Documents/Proyectos-Iron/cannabot/cannabot-gcloud-creds.pem',
                     scopes: ['https://www.googleapis.com/auth/cloud-platform'],
                 },
                 (err, token) => {
                     resolve(token);
+                    console.log(" async function getToken => ", token)
                 },
             );
         });

@@ -11,7 +11,7 @@
     "start": "node index.js",
     "backend": "nodemon index.js",
     "frontend": "npm run start --prefix client",
-    "dev": "concurrently \"npm run backend\"  \"npm run start --prefix client\""
+    "dev": "concurrently \"npm run backend\"  \"npm run start --prefix client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "",
@@ -19,11 +19,19 @@
   "dependencies": {
     "actions-on-google": "^2.6.0",
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "dialogflow": "^0.8.0",
     "dialogflow-fulfillment": "^0.6.1",
     "express": "^4.16.4",
+    "fs": "0.0.1-security",
     "google-oauth-jwt": "^0.2.0",
-    "mongoose": "^5.1.2"
+    "materialize-css": "^1.0.0",
+    "mongoose": "^5.1.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "^3.0.1",
+    "universal-cookie": "^4.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.6",

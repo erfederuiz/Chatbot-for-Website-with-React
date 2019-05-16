@@ -1,5 +1,5 @@
 const {WebhookClient} = require('dialogflow-fulfillment');
-
+const axios = require('axios');
 const mongoose = require('mongoose');
 const Demand = mongoose.model('demand');
 const Coupon = mongoose.model('coupon');
@@ -10,10 +10,26 @@ module.exports = app => {
         const agent = new WebhookClient({ request: req, response: res });
 
         function snoopy(agent) {
-            agent.add(`Welcome to my Snoopy fulfillment!`);
+            agent.add(`Welcome to my Cannabot fulfillment!`);
         }
 
-        async function registration(agent) {
+        async function solve_headache(agent) {
+            let result;
+              await axios.get('http://localhost:4000/api/strains/filter?name=&race=&medical=Headache&positive=&flavour=')
+              .then(response=>{
+                  let strains = response.data.map(strain=>strain.name);
+                   strains =strains.slice(0,5).join(", ")
+                  console.log(strains)
+                  result= strains
+                  console.log("estoy en el axios")
+              })
+              .catch(err=>{err})
+
+            console.log(result)
+            agent.add(`Te voy a dar cosita buena...\n ${result}`);
+        }
+
+/*        async function registration(agent) {
 
             const registration = new Registration({
                 name: agent.parameters.name,
@@ -28,9 +44,9 @@ module.exports = app => {
             } catch (err){
                 console.log(err);
             }
-        }
+        }*/
 
-        async function learn(agent) {
+/*        async function learn(agent) {
 
             Demand.findOne({'course': agent.parameters.courses}, function(err, course) {
                 if (course !== null ) {
@@ -51,7 +67,7 @@ module.exports = app => {
             }
 
             agent.add(responseText);
-        }
+        }*/
 
         function fallback(agent) {
             agent.add(`I didn't understand`);
@@ -60,8 +76,9 @@ module.exports = app => {
 
         let intentMap = new Map();
         intentMap.set('snoopy', snoopy);
-        intentMap.set('learn courses', learn);
-        intentMap.set('recommend courses - yes', registration);
+        //intentMap.set('learn courses', learn);
+        //intentMap.set('recommend courses - yes', registration);
+        intentMap.set('cure headache', solve_headache);
         intentMap.set('Default Fallback Intent', fallback);
 
         agent.handleRequest(intentMap);

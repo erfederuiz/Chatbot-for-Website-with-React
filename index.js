@@ -5,12 +5,30 @@ const app = express();
 
 const config = require('./config/keys');
 const mongoose = require('mongoose');
+const cors         = require('cors');
 mongoose.connect(config.mongoURI, { useNewUrlParser: true });
 
 require('./models/Registration');
 require('./models/Demand');
 require('./models/Coupons');
 
+//CORS setup
+const whitelist = ['http://localhost:3000','https://cannabotapp.herokuapp.com/']
+
+const corsOptions = {
+    origin: function(origin, callback) {
+        if (whitelist.includes(origin) || !origin) {
+            callback(null, true)
+        } else {
+            console.log(whitelist);
+            console.log(origin);
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
+    credentials:true
+}
+
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 

@@ -11,6 +11,9 @@ import QuickReplies from './QuickReplies';
 
 const cookies = new Cookies();
 
+const project_id = 'cannabot-72acc';
+const sessionId = uuid.v4();
+
 class Chatbot extends Component {
     messagesEnd;
     talkInput;
@@ -36,6 +39,7 @@ class Chatbot extends Component {
     }
 
     async df_text_query(text) {
+        console.log('df_text_query');
         let says = {
             speaks: 'user',
             msg: {
@@ -83,6 +87,7 @@ class Chatbot extends Component {
 
             if (this.state.clientToken === false) {
                 const res = await axios.get('/api/get_client_token');
+
                 this.setState({clientToken: res.data.token});
             }
 
@@ -93,10 +98,11 @@ class Chatbot extends Component {
                 }
             };
 
-
+            let postURL = 'https://dialogflow.googleapis.com/v2/projects/' + project_id +
+              '/agent/sessions/' + sessionId + cookies.get('userID') + ':detectIntent';
+            console.log("Chatbot df_client_call => " , postURL);
             const res = await axios.post(
-                'https://dialogflow.googleapis.com/v2/projects/' + process.env.REACT_APP_GOOGLE_PROJECT_ID +
-                '/agent/sessions/' + process.env.REACT_APP_DF_SESSION_ID + cookies.get('userID') + ':detectIntent',
+                postURL,
                 request,
                 config
             );
@@ -174,10 +180,10 @@ class Chatbot extends Component {
         this.setState({showBot: true});
     }
 
-    hide() {
+    hide(event) {
         event.preventDefault();
         event.stopPropagation();
-        this.setState({showBot: hide});
+        this.setState({showBot: false});
     }
 
     _handleQuickReplyPayload(event, payload, text) {
@@ -248,6 +254,7 @@ class Chatbot extends Component {
     }
 
     _handleInputKeyPress(e) {
+        console.log("Chatbot _handleInputKeyPress => ", this.state.clientToken )
         if (e.key === 'Enter') {
             this.df_text_query(e.target.value);
             e.target.value = '';
