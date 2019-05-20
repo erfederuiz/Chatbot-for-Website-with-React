@@ -29,6 +29,22 @@ module.exports = app => {
             agent.add(`Te voy a dar cosita buena...\n ${result}`);
         }
 
+        async function like_flavor(agent) {
+            let result;
+            await axios.get('http://localhost:4000/api/strains/filter?name=&race=&medical=&positive=&flavour=mint')
+              .then(response=>{
+                  let strains = response.data.map(strain=>strain.name);
+                  strains =strains.slice(0,5).join(", ")
+                  //console.log(strains)
+                  result= strains
+                  //console.log("estoy en el axios")
+              })
+              .catch(err=>{err})
+
+            //console.log(result)
+            agent.add(`Esto está muuuuuu rico...\n ${result}`);
+        }
+
 /*        async function registration(agent) {
 
             const registration = new Registration({
@@ -79,6 +95,7 @@ module.exports = app => {
         //intentMap.set('learn courses', learn);
         //intentMap.set('recommend courses - yes', registration);
         intentMap.set('cure headache', solve_headache);
+        intentMap.set('like mint', like_flavor);
         intentMap.set('Default Fallback Intent', fallback);
 
         agent.handleRequest(intentMap);
